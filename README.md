@@ -1,9 +1,11 @@
 # NAPI
-The Netr API Framework is an opinionated API framework designed specifically for use with the Fiber web framework, a popular open-source web framework for Go programming language. This framework draws inspiration from Laravel's end-to-end testing capabilities, enabling developers to easily and effectively test their applications.
+The Netr API Framework is an opinionated API framework designed specifically for use with the Fiber web framework, a popular open-source web framework for the Go programming language. This framework draws inspiration from Laravel's end-to-end testing capabilities, enabling developers to easily and effectively test their applications.
 
-While this framework was initially developed for the personal use of its creator, it is open to suggestions and contributions from other developers via pull requests. As such, the developer is committed to continuously improving the framework and its accompanying documentation.
+It's important to note that the Netr API Framework currently only supports Gorm as a database driver. This feature provides developers with a reliable and efficient way of accessing data within their applications. Additionally, the framework's testing suite leverages a similar RefreshDB() as Laravel, utilizing sqllite under the hood. This ensures that developers can thoroughly test their applications before deployment.
 
-As of now, the Netr API Framework is still in the development stage. However, it is usable for small-scale projects and experimentation. Additionally, the development team is committed to ensuring that any new features added to the framework are designed in a way that does not break existing code and does not impact the underlying structure of the package.
+While the Netr API Framework was initially developed for the personal use of its creator, it is open to suggestions and contributions from other developers via pull requests. As such, the developer is committed to continuously improving the framework and its accompanying documentation.
+
+Currently, the Netr API Framework is still in the development stage. However, it is usable for small-scale projects and experimentation. Additionally, the development team is committed to ensuring that any new features added to the framework are designed in a way that does not break existing code and does not impact the underlying structure of the package. The team is also open to any suggestions and feedback from the community and will update the documentation accordingly.
 
 -ChatGPT
 
