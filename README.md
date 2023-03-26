@@ -1,7 +1,11 @@
 # NAPI
-Netr API Framework. Opinionated API Framework for [Fiber](https://gofiber.io/). Took a lot of inspiration from the E2E testing in [Laravel](https://laravel.com).
+The Netr API Framework is an opinionated API framework designed specifically for use with the Fiber web framework, a popular open-source web framework for Go programming language. This framework draws inspiration from Laravel's end-to-end testing capabilities, enabling developers to easily and effectively test their applications.
 
-This is primarily a framework for my own use, but I'm open to suggestions and PRs. I can write a better README and documentation if there's interest.
+While this framework was initially developed for the personal use of its creator, it is open to suggestions and contributions from other developers via pull requests. As such, the developer is committed to continuously improving the framework and its accompanying documentation.
+
+As of now, the Netr API Framework is still in the development stage. However, it is usable for small-scale projects and experimentation. Additionally, the development team is committed to ensuring that any new features added to the framework are designed in a way that does not break existing code and does not impact the underlying structure of the package.
+
+-ChatGPT
 
 ## Examples
 - `/app` API Server with Gorm and Controller Testing
@@ -71,14 +75,15 @@ type accountSuite struct {
 }
 
 func (s *accountSuite) TestIndex_ExpectedBehavior() {
+    // Create account using factory [see /examples/db/models/suite.go & /factory]
     a := s.CreateAccount()
     
     trex.New(s).
-    Get(s.Route("accounts.index"), nil).
-    AssertOk().
-    AssertDataCount(2).
-    AssertJsonEqual("data[0].username", a.Username).
-    AssertJsonEqual("data[1].username", b.Username)
+        Get(s.Route("accounts.index"), nil).
+        AssertOk().
+        AssertDataCount(2).
+        AssertJsonEqual("data[0].username", a.Username).
+        AssertJsonEqual("data[1].username", b.Username)
 }
 ```
 
