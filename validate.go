@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"unicode"
 
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
@@ -43,12 +44,16 @@ func (ve ValidationError) Error() map[string]string {
 // //////////////////////
 // ERROR TRANSLATIONS
 // //////////////////////
-var errStartsWith string = "{0} must start with '{1}'"
+var (
+	errStartsWith        string = "{0} must start with '{1}'"
+	passwordErrorMessage        = "Password must contain an uppercase letter and a number"
+)
 
 //var validate *validator.Validate
 
 func validateRequest[T any](s T) map[string]string {
 	validate := validator.New()
+	_ = validate.RegisterValidation("password", validatePassword)
 
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
@@ -61,6 +66,18 @@ func validateRequest[T any](s T) map[string]string {
 	english := en.New()
 	uni := ut.New(english, english)
 	trans, _ := uni.GetTranslator("en")
+
+	// Register the custom error message for the password validation function
+	if err := validate.RegisterTranslation("password", trans, func(ut ut.Translator) error {
+		return ut.Add("password", passwordErrorMessage, true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("password", fe.Field())
+		return t
+	}); err != nil {
+		// FIXME: don't leave this
+		panic(err)
+	}
+
 	_ = enTranslations.RegisterDefaultTranslations(validate, trans)
 	addTranslation(validate, trans, "startswith", errStartsWith)
 
@@ -104,4 +121,28 @@ func translateError(err error, trans ut.Translator) (errs map[string]string) {
 		//errs = append(errs, dtos.NewFieldError(e.Field(), e.Value(), msg))
 	}
 	return errs
+}
+
+func validatePassword(fl validator.FieldLevel) bool {
+	password := fl.Field().String()
+
+	// Check if password contains at least one number
+	hasNumber := false
+	for _, char := range password {
+		if unicode.IsNumber(char) {
+			hasNumber = true
+			break
+		}
+	}
+
+	// Check if password contains at least one upper case letter
+	hasUpperCase := false
+	for _, char := range password {
+		if unicode.IsUpper(char) {
+			hasUpperCase = true
+			break
+		}
+	}
+
+	return hasNumber && hasUpperCase
 }
