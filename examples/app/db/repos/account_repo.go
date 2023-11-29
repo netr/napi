@@ -7,20 +7,18 @@ import (
 )
 
 type AccountRepo struct {
-	base napi.IBaseRepository
-	db   *gorm.DB
+	db napi.IRepository[*gorm.DB]
 }
 
 func NewAccountRepo(db *gorm.DB) *AccountRepo {
 	return &AccountRepo{
-		base: napi.NewBaseRepository(db),
-		db:   db,
+		db: napi.NewGormRepository(db),
 	}
 }
 
 func (a *AccountRepo) GetAll() ([]models.Account, error) {
 	var accounts []models.Account
-	if tx := a.db.Model(&models.Account{}).Find(&accounts); tx.Error != nil {
+	if tx := a.db.DB().Model(&models.Account{}).Find(&accounts); tx.Error != nil {
 		return nil, tx.Error
 	}
 
@@ -28,7 +26,7 @@ func (a *AccountRepo) GetAll() ([]models.Account, error) {
 }
 
 func (a *AccountRepo) Create(acc *models.Account) (*models.Account, error) {
-	if err := a.base.Create(acc); err != nil {
+	if err := a.db.Create(acc); err != nil {
 		return nil, err
 	}
 
@@ -37,7 +35,7 @@ func (a *AccountRepo) Create(acc *models.Account) (*models.Account, error) {
 
 func (a *AccountRepo) Update(id interface{}, password string) (*models.Account, error) {
 	model := new(models.Account)
-	if err := a.base.Update(model, id, napi.UpdateMap{"password": password}); err != nil {
+	if err := a.db.Update(model, id, napi.UpdateMap{"password": password}); err != nil {
 		return nil, err
 	}
 
