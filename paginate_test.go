@@ -8,7 +8,24 @@ import (
 
 type TestRequest struct {
 	ID int `json:"id" validate:"required"`
-	TableManager
+	Paginater
+}
+
+func TestTableManager_Validate_ShouldSetDefaultsProperly(t *testing.T) {
+	cp := new(TestRequest)
+	// validate here
+	cp.ID = 2
+
+	cp.Validate(PaginaterData{
+		Page:     3,
+		Limit:    25,
+		OrderBy:  "test",
+		OrderDir: "desc",
+		FilterBy: "all",
+		Search:   "test",
+	})
+
+	assert.Equal(t, 3, cp.Page)
 }
 
 func TestTableManager_ValidateSearch_ShouldSetDefaultsProperly(t *testing.T) {

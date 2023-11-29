@@ -1,17 +1,26 @@
 package napi
 
-type TableManager struct {
+type Paginater struct {
 	CanPaginate
 	CanOrder
 	CanFilter
 	CanSearch
 }
 
-func (req *TableManager) ValidateTable(page, limit int, orderBy, orderDir, filterBy, search string) {
-	req.ValidatePagination(page, limit)
-	req.ValidateOrder(orderBy, orderDir)
-	req.ValidateFilter(filterBy)
-	req.ValidateSearch(search)
+type PaginaterData struct {
+	Page     int
+	Limit    int
+	OrderBy  string
+	OrderDir string
+	FilterBy string
+	Search   string
+}
+
+func (p *Paginater) Validate(data PaginaterData) {
+	p.ValidatePagination(data.Page, data.Limit)
+	p.ValidateOrder(data.OrderBy, data.OrderDir)
+	p.ValidateFilter(data.FilterBy)
+	p.ValidateSearch(data.Search)
 }
 
 type CanPaginate struct {
