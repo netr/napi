@@ -8,10 +8,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/bitly/go-simplejson"
-	"github.com/gofiber/fiber/v2"
-	"github.com/steinfletcher/apitest-jsonpath/jsonpath"
-	"github.com/stretchr/testify/require"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -19,6 +15,11 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+
+	"github.com/bitly/go-simplejson"
+	"github.com/gofiber/fiber/v2"
+	"github.com/steinfletcher/apitest-jsonpath/jsonpath"
+	"github.com/stretchr/testify/require"
 )
 
 func New(s IFiberTestSuite) *TestResponse {
@@ -380,6 +381,12 @@ func createRequest(method, url string, postData *url.Values, headers *http.Heade
 	var req *http.Request
 	if postData == nil {
 		req = httptest.NewRequest(method, url, nil)
+		if headers != nil {
+			// add the parameter headers into the requests headers
+			for key, value := range *headers {
+				req.Header.Add(key, value[0])
+			}
+		}
 	} else {
 		if headers != nil && headers.Get(fiber.HeaderContentType) == "application/json" {
 			req = httptest.NewRequest(method, url, strings.NewReader(convertUrlValuesToJson(postData)))
