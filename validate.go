@@ -16,10 +16,7 @@ import (
 type CanValidate struct{}
 
 func (v CanValidate) Validate(c *fiber.Ctx, req interface{}) *ValidationError {
-	err := c.BodyParser(req)
-	if err != nil {
-		return &ValidationError{error: err}
-	}
+	_ = c.BodyParser(req)
 
 	if vErr := validateRequest(req); vErr != nil {
 		return &ValidationError{bag: vErr}
