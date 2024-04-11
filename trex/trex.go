@@ -94,6 +94,16 @@ func (tr *TestResponse) TestRequest(method, url string, postData *url.Values, he
 	return tr
 }
 
+// TestReaderRequest will execute a fiber.App().Test() on the given request data and return a TestResponse.
+func (tr *TestResponse) TestReaderRequest(method, url string, reader io.Reader, headers *http.Header) *TestResponse {
+	req := createReaderRequest(method, tr.makeUrl(url), reader, headers)
+	resp, _ := tr.suite.App().Test(req, 15000)
+
+	tr.response = resp
+	tr.request = req
+	return tr
+}
+
 // BodyReader returns the response body as io.ReadCloser.
 //
 // See: https://stackoverflow.com/a/60098300 for information about this issue.
@@ -374,6 +384,24 @@ func convertUrlValuesToJson(values *url.Values) string {
 	jsonString = strings.Replace(jsonString, `"]`, `"`, -1)
 
 	return jsonString
+}
+
+// createReaderRequest helper function to create httptest requests
+func createReaderRequest(method, url string, reader io.Reader, headers *http.Header) *http.Request {
+	req := httptest.NewRequest(method, url, reader)
+
+	if headers != nil {
+		// add the parameter headers into the requests headers
+		for key, value := range *headers {
+			req.Header.Add(key, value[0])
+		}
+	}
+
+	if req.Header.Get(fiber.HeaderContentType) == "" {
+		req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationForm)
+	}
+
+	return req
 }
 
 // createRequest helper function to create httptest requests
